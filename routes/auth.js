@@ -13,6 +13,7 @@ function validate(user) {
   return schema.validate(user);
 }
 
+// Login user.
 router.post("/", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -23,7 +24,8 @@ router.post("/", async (req, res) => {
   const isValid = await bcrypt.compare(req.body.password, user.password);
   if (!isValid) return res.status(400).send("Invalid email or password");
 
-  res.send("OK");
+  const token = user.generateAuthToken();
+  res.send(token);
 });
 
 module.exports = router;
